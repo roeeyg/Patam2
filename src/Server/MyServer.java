@@ -10,6 +10,9 @@ public class MyServer implements Server {
     private int port;
     private boolean stop = false;
 
+    public MyServer()
+    {}
+    
     public MyServer(int port) {
         this.port = port;
     }
