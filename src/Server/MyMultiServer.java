@@ -7,6 +7,9 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class MyMultiServer extends MyServer {
 
@@ -21,6 +24,11 @@ public class MyMultiServer extends MyServer {
     			new PriorityBlockingQueue<Runnable>());
 	}
 	
+    @Override
+    public void stop() {
+        stop = true;
+    }
+    
 	private void startServer(ClientHandler clientHandler) throws IOException {
 		
 		   serverSocket = new ServerSocket(port);
@@ -39,7 +47,7 @@ public class MyMultiServer extends MyServer {
 					} while (priority == 0);
 
 					System.out.println("Client priority: " + priority);
-					tpexec.execute(new PriorityRunnable(priority) {
+					tpexec.execute(new PriorityQRunnable(priority) {
 						@Override
 						public void run() {
 							try {
@@ -72,6 +80,3 @@ public class MyMultiServer extends MyServer {
 	        System.out.println("Done");
 	    }
 	}
-	
-
-}
