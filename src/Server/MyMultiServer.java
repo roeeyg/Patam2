@@ -80,14 +80,4 @@ public class MyMultiServer extends MyServer {
 	        System.out.println("Done");
 	    }
 	
-		public static void main(String[] args) throws Exception {
-			System.out.println("**** Server Side ****");
-
-//        Server s = new MyServer(Integer.parseInt(args[0]));//Take the port from the args
-			Server s = new MyMultiServer(6400, 5);//Take the port from the args
-			s.start(new MyClientHandler());
-			System.in.read();
-			s.stop();
-			System.out.println("Closed server");
-		}
 	}
