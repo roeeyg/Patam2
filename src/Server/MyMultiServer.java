@@ -15,7 +15,7 @@ public class MyMultiServer extends MyServer {
 
     private ServerSocket serverSocket;
     private int port;
-    private boolean stop = false;
+    private volatile boolean stop = false;
     ThreadPoolExecutor tpexec;
 	
     public MyMultiServer(int port, int num) {

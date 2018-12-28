@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import pipes_client_app.view.PipesGrid?>
+<BorderPane prefHeight="342.0" prefWidth="352.0" xmlns="http://javafx.com/javafx/8.0.172-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="pipes_client_app.view.MainWindowController">
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open"/>
+                        <MenuItem mnemonicParsing="false" text="Close"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#serverConfig" text="Server"/>
+                        <MenuItem mnemonicParsing="false" onAction="#themeConfig" text="Theme"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <left>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <Button mnemonicParsing="false" focusTraversable="false" onAction="#start" prefHeight="27.0"
+                        prefWidth="60.0" text="Start">
+                    <VBox.margin>
+                        <Insets bottom="10.0"/>
+                    </VBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" focusTraversable="false" prefHeight="27.0" prefWidth="60.0"
+                        text="Stop"/>
+            </children>
+            <opaqueInsets>
+                <Insets/>
+            </opaqueInsets>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+        </VBox>
+    </left>
+    <bottom>
+        <HBox BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Status"/>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+        </HBox>
+    </bottom>
+    <center>
+        <PipesGrid fx:id="pipesGrid" anglePipeImage="./resources/TubeCorner-R01.png"
+                   regularPipeImage="./resources/Tube-R01.png" height="500.0" width="500.0"
+                   BorderPane.alignment="CENTER"/>
+    </center>
+</BorderPane>
