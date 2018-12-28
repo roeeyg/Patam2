@@ -38,7 +38,4 @@ public class ClientDemo {
         inFromUser.close();
         theServer.close();
     }
-
-    // pull test
-    
 }
