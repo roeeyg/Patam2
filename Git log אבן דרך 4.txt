@@ -1,0 +1,29 @@
+commit 03e269e75ac4542ef7ae9fcd67b29efe10f6b43b
+Author: DESKTOP-V75O7I6\Gil <gilgoldberger@gmail.com>
+Date:   Sat Nov 24 18:00:50 2018 +0200
+
+    Add Multi server run check
+
+commit 212286caffcdebb8fa07d2ef7ad7be7443af3ee0
+Author:  <roeeyg@gmail.com>
+Date:   Sat Nov 24 15:41:03 2018 +0200
+
+    Done MultiServer
+
+commit 15defc296bd4e946195250c08a8010c6c8557e90
+Author: DESKTOP-V75O7I6\Gil <gilgoldberger@gmail.com>
+Date:   Fri Nov 23 15:16:59 2018 +0200
+
+    MyMultiServer changes
+
+commit 9e78c934f7fb81a592ffeb7ce47cc4d3e8bf032d
+Author: DESKTOP-V75O7I6\Gil <gilgoldberger@gmail.com>
+Date:   Fri Nov 23 12:57:16 2018 +0200
+
+    Add Multi Server
+
+commit bb52034dee2a0cae69f8a69846e3380f809475ea
+Author:  <roeeyg@gmail.com>
+Date:   Fri Nov 23 11:34:42 2018 +0200
+
+    first
