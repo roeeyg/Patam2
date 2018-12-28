@@ -1,12 +1,9 @@
-package pipes_client_app.view;
+package View;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.stage.FileChooser;
-import View.dialogs.NakedObjectDisplayer;
-import pipes_client_app.dialogs.ServerConfigObject;
-import pipes_client_app.dialogs.ThemeConfigObject;
-import pipes_client_app.dialogs.ThemeType;
+import AppProperties.*;
 
 import java.io.File;
 import java.net.URL;
@@ -26,16 +23,16 @@ public class MainWindowController implements Initializable {
     };
 
     @FXML
-    private PipesGrid pipesGrid;
+    private PipeBoard PipeBoard;
 
     private NakedObjectDisplayer nakedObjectDisplayer = new NakedObjectDisplayer();
-    private ServerConfigObject serverConfigObject = new ServerConfigObject();
-    private ThemeConfigObject themeConfigObject = new ThemeConfigObject();
+    private ServerConfig serverConfigObject = new ServerConfig();
+    private ThemeConfig themeConfigObject = new ThemeConfig();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         changeTheme();
-        pipesGrid.setMazeData(mazeData);
+        PipeBoard.setMazeData(mazeData);
 
     }
 
@@ -70,14 +67,14 @@ public class MainWindowController implements Initializable {
     }
 
     private void changeTheme() {
-        ThemeType themeType = themeConfigObject.getSelectedTheme();
-        pipesGrid.setAnglePipeImage(themeType.getAnglePipe());
-        pipesGrid.setRegularPipeImage(themeType.getRegularPipe());
-        pipesGrid.setBackgroundImageProperty(themeType.getBackgroundImage());
-        pipesGrid.setStartImage(themeType.getStartImage());
-        pipesGrid.setGoalImage(themeType.getEndImage());
-        pipesGrid.initImages();
-        pipesGrid.redraw();
+        Themes themeType = themeConfigObject.getSelectedTheme();
+        PipeBoard.setAnglePipeImage(themeType.getAnglePipe());
+        PipeBoard.setRegularPipeImage(themeType.getRegularPipe());
+        PipeBoard.setBackgroundImageProperty(themeType.getBackgroundImage());
+        PipeBoard.setStartImage(themeType.getStartImage());
+        PipeBoard.setGoalImage(themeType.getEndImage());
+        PipeBoard.initImages();
+        PipeBoard.redraw();
     }
 
 }

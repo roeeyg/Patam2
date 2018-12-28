@@ -288,7 +288,7 @@ public class PipeSolver implements Searchable<char[][]> {
         return manhattanGrade(state.getState(), startrow, startcol, Direction.Start);
     }
 
-    private char getNextChar(char c) {
+    public static char getNextChar(char c) {
         switch (c) {
             case '|':
                 return '-';
