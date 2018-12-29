@@ -5,10 +5,10 @@ import javafx.collections.ObservableList;
 
 public class ThemeConfig implements NakedObjectDropDown {
     private ObservableList<String> dropDownNames;
-    private Themes selected = Themes.Glow;
+    private Themes selected = Themes.Gray;
 
     public ThemeConfig() {
-        dropDownNames = FXCollections.observableArrayList(Themes.Glow.getName(), Themes.Dark.getName());
+        dropDownNames = FXCollections.observableArrayList(Themes.Gray.getName(), Themes.Blue.getName());
     }
 
     @Override
