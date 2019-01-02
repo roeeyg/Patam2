@@ -60,7 +60,7 @@
         </HBox>
     </bottom>
     <center>
-        <PipeBoard fx:id="PipeBoard" anglePipeImage="./resources/TubeCorner-R01.png"
+        <PipeBoard fx:id="PipeBoard" anglePipeImage="./resources/GrayCorner.png"
                    regularPipeImage="./resources/Gray.png" height="500.0" width="500.0"
                    BorderPane.alignment="CENTER"/>
     </center>

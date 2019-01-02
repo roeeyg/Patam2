@@ -2,24 +2,27 @@ package View;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import AppProperties.*;
+import Model.PGModel;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainWindowController implements Initializable {
 
-    char[][] mazeData = {
-            {'s', 'F', 'F', '-', 'J', '7', '7', '7', '7'},
-            {'F', '7', '7', '7', '7', '|', '7', 'F', 'L'},
-            {'L', '7', 'F', '7', '7', '7', '7', '7', '|'},
-            {'7', '-', '-', '7', '|', '7', '7', '7', '7'},
-            {'L', '7', '7', '7', 'L', 'F', '7', '|', '7'},
-            {'|', '7', '|', '7', '7', '7', '7', '7', '7'},
-            {'-', 'L', 'F', '7', '|', 'F', 'L', '7', '-'},
-            {'7', 'F', '-', '-', '-', '-', '-', '-', 'g'},
+
+    private MyModelView ModelView = new MyModelView();
+	
+	char[][] mazeData = {
+            {'s', 'F', 'F', '-', 'J',},
+            {'F', '7', '7', '7', '7',},
+            {'L', '7', 'F', '7', '7',},
+            {'7', '-', '-', '7', 'g'}
+
     };
 
     @FXML
@@ -33,14 +36,24 @@ public class MainWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         changeTheme();
         PipeBoard.setMazeData(mazeData);
+        
+		 ModelView.pipeBoard.addEventFilter(MouseEvent.MOUSE_CLICKED, (e)->{
+			 int col = (int) (e.getX() / ModelView.pipeBoard.getColdWidth());
+		     int row = (int) (e.getY() / ModelView.pipeBoard.getRowHeight());
+		     ModelView.PGModel.movePipe(row, col);
+		     ModelView.pipeBoard.redraw();
+		     //check if goal
+			 });
 
     }
 
-    public void start() {
-        System.out.println("start");
+    public void start() throws IOException, InterruptedException {
+
+        
+    	System.out.println(ModelView.isGoal());
     }
 
-    public void openFile() {
+    public void openFile() throws IOException {
         System.out.println("openFile");
         FileChooser fc = new FileChooser();
         fc.setTitle("Open maze file");
@@ -48,8 +61,10 @@ public class MainWindowController implements Initializable {
         fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Xml files", "xml"));
         File chosen = fc.showOpenDialog(null);
         if (chosen != null) {
-            System.out.println("Chose: " + chosen.getName());
+        	ModelView.loadGame(chosen.getPath());
+        	ModelView.pipeBoard.redrawMaze();
         }
+        
     }
 
     public void serverConfig() {

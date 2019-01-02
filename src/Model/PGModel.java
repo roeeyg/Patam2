@@ -4,6 +4,9 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 
 import java.io.*;
 import java.net.Socket;
@@ -13,9 +16,9 @@ import java.util.List;
 public class PGModel {
 
     private Socket serverSocket;
-    public BooleanProperty isGoal;
+    public BooleanProperty isGoal = new SimpleBooleanProperty();
     public IntegerProperty numberOfSteps;
-    public ListProperty<char[]> gameBoard;
+    public SimpleListProperty<char[]> gameBoard = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
 
 
     public void connect(String ip, String port) throws IOException {
@@ -28,6 +31,27 @@ public class PGModel {
         if (this.serverSocket != null) {
             this.serverSocket.close();
         }
+    }
+    
+    public void setMazeData(char[][] array)
+    {
+    	this.gameBoard.setAll(array);
+    }
+    
+    public char[][] ToArray()
+    {    	
+    	int col = this.gameBoard.getSize();
+    	int row = this.gameBoard.getValue().get(0).length;
+    	
+    	char[][] array = new char[col][row];
+    	
+    	for(int i = 0; i < col; i++)
+    		for(int j =0; j < row; j++)
+    		{
+    			array[i][j] = this.gameBoard.get(i)[j];
+    		}
+    	
+    	return array;
     }
 
     public void movePipe(int row, int col) {
@@ -78,34 +102,6 @@ public class PGModel {
             out.close();
     }
 
-    public void solve() throws IOException, InterruptedException {
-        if (this.serverSocket != null) {
-            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(this.serverSocket.getInputStream()));
-            PrintWriter outToServer = new PrintWriter(this.serverSocket.getOutputStream());
-
-            for (char[] line : this.gameBoard.get()) {
-                outToServer.println(line);
-                outToServer.flush();
-            }
-
-            outToServer.println("done");
-            outToServer.flush();
-
-            String line;
-            while (!(line = inFromServer.readLine()).equals("done")) {
-                String[] steps = line.split(",");
-                int row = Integer.parseInt(steps[0]);
-                int col = Integer.parseInt(steps[1]);
-                int step = Integer.parseInt(steps[2]);
-
-                for (int i = 1; i <= step; i++) {
-                    Platform.runLater(()-> movePipe(row, col));
-                    Thread.sleep(50);
-                }
-            }
-        }
-    }
-
     public void loadGame(String fileName) throws IOException {
         List<char[]> mazeBuilder = new ArrayList<>();
         BufferedReader reader;
@@ -117,5 +113,27 @@ public class PGModel {
         this.gameBoard.setAll(mazeBuilder.toArray(new char[mazeBuilder.size()][]));
         reader.close();
     }
+    
+    
+	public boolean isSolution() throws IOException, InterruptedException {
+		if (serverSocket != null) {
+			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(this.serverSocket.getInputStream()));
+			PrintWriter outToServer = new PrintWriter(this.serverSocket.getOutputStream());
 
+			for (char[] line : this.gameBoard.get()) {
+				outToServer.println(line);
+				outToServer.flush();
+			}
+
+			outToServer.println("done");
+			outToServer.flush();
+
+			String line;
+			
+			if ((line = inFromServer.readLine()).equals("done")) 
+				return true;
+		}
+		return false;
+
+	}
 }

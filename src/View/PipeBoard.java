@@ -14,13 +14,16 @@ import javafx.scene.paint.Color;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import Model.PGModel;
 
 public class PipeBoard extends Canvas {
-    private static final String ANGLE_PIPE_DEFAULT = "./resources/TubeCorner-R01.png";
-    private static final String REGULAR_PIPE_DEFAULT = "./resources/Tube-R01.png";
-    private static final String BACKGROUND_DEFAULT = "./resources/Wall-R02.jpg";
-    private static final String GOAL_DEFAULT = "./resources/End-R01.png";
-    private static final String START_DEFAULT = "./resources/Start-R01.png";
+    private static final String ANGLE_PIPE_DEFAULT = "./resources/GrayCorner.png";
+    private static final String REGULAR_PIPE_DEFAULT = "./resources/Gray.png";
+    private static final String BACKGROUND_DEFAULT = "./resources/GrayBackGround.jpg";
+    private static final String GOAL_DEFAULT = "./resources/GraySE.png";
+    private static final String START_DEFAULT = "./resources/GraySE.png";
 
     private char[][] mazeData;
 
@@ -31,17 +34,21 @@ public class PipeBoard extends Canvas {
     private Image imagePipeVertical, imagePipeHorizontal, imagePipe0Rotation, imagePipe90Rotation,
             imagePipe180Rotation, imagePipe270Rotation, imageBackground, imageStart, imageGoal;
 
-
+    
     public PipeBoard() {
         regularPipeImage = new SimpleStringProperty();
         anglePipeImage = new SimpleStringProperty();
         backgroundImage = new SimpleStringProperty();
         startImage = new SimpleStringProperty();
         goalImage = new SimpleStringProperty();
-        addEventFilter(MouseEvent.MOUSE_CLICKED, (this::clickedOnPosition));
     }
 
 
+    public char[][] getMazeData()
+    {
+    	return this.mazeData;
+    }
+    
     public void setMazeData(char[][] mazeData) {
         this.mazeData = mazeData;
         initImages();
@@ -134,16 +141,18 @@ public class PipeBoard extends Canvas {
     public StringProperty goalImageProperty() {
         return goalImage;
     }
-
-    private void clickedOnPosition(MouseEvent event) {
-        int col = (int) (event.getX() / colWidth);
-        int row = (int) (event.getY() / rowHeight);
-//        System.out.println("clickedOnPosition: " + row + ", " + col);
-        mazeData[row][col] = PipeSolver.getNextChar(mazeData[row][col]);
-        redraw();
+    
+    public double getColdWidth()
+    {
+    	return this.colWidth;
+    }
+    
+    public double getRowHeight()
+    {
+    	return this.rowHeight;
     }
 
-    private void redrawMaze() {
+    public void redrawMaze() {
         double width = getWidth();
         double height = getHeight();
         colWidth = width / mazeData[0].length;
