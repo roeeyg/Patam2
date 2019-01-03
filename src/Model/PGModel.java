@@ -1,25 +1,67 @@
 package Model;
 
+
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import Searchers.PipeSolver;
 
 public class PGModel {
+    private static final String TIME_PREFIX = "seconds:";
+    private static final String STEPS_PREFIX = "steps:";
+
+    private ScheduledExecutorService executor;
 
     private Socket serverSocket;
+    public IntegerProperty stepsNum = new SimpleIntegerProperty();
+    public IntegerProperty secondsPassed = new SimpleIntegerProperty();
+    public ListProperty<char[]> gameBoard = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
     public BooleanProperty isGoal = new SimpleBooleanProperty();
-    public IntegerProperty numberOfSteps;
-    public SimpleListProperty<char[]> gameBoard = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
 
+    private char[][] mazeData = {
+            {'s', 'L', 'F'},
+            {'F', '-', 'F'},
+            {'|', '7', 'g'}
+    };
+
+    public char[][] getMazeData() {
+        return gameBoard.toArray(new char[gameBoard.size()][]);
+    }
+
+    public PGModel() {
+        gameBoard.addAll(mazeData);
+    }
+
+    public boolean isGameStarted() {
+        return executor != null;
+    }
+
+    public void start() {
+        setTimer();
+    }
+
+    public void stop() {
+        if (executor != null) {
+            executor.shutdown();
+        }
+        executor = null;
+    }
+
+    private void setTimer() {
+        Runnable helloRunnable = () -> Platform.runLater(() -> secondsPassed.setValue(secondsPassed.get() + 1));
+
+        executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(helloRunnable, 0, 1, TimeUnit.SECONDS);
+    }
 
     public void connect(String ip, String port) throws IOException {
         int portNum = Integer.parseInt(port);
@@ -27,113 +69,90 @@ public class PGModel {
         System.out.println("Connected to server");
     }
 
-    public void disconnect() throws IOException{
+    public void disconnect() throws IOException {
         if (this.serverSocket != null) {
             this.serverSocket.close();
         }
     }
-    
-    public void setMazeData(char[][] array)
-    {
-    	this.gameBoard.setAll(array);
-    }
-    
-    public char[][] ToArray()
-    {    	
-    	int col = this.gameBoard.getSize();
-    	int row = this.gameBoard.getValue().get(0).length;
-    	
-    	char[][] array = new char[col][row];
-    	
-    	for(int i = 0; i < col; i++)
-    		for(int j =0; j < row; j++)
-    		{
-    			array[i][j] = this.gameBoard.get(i)[j];
-    		}
-    	
-    	return array;
-    }
 
     public void movePipe(int row, int col) {
-        switch (this.gameBoard.get(col)[row]) {
-            case 'L':
-                this.gameBoard.get(col)[row] = 'F';
-                numberOfSteps.set(numberOfSteps.get() + 1);
-                break;
-            case 'F':
-                this.gameBoard.get(col)[row] = '7';
-                numberOfSteps.set(numberOfSteps.get() + 1);
-                break;
-            case '7':
-                this.gameBoard.get(col)[row] = 'J';
-                numberOfSteps.set(numberOfSteps.get() + 1);
-                break;
-            case 'J':
-                this.gameBoard.get(col)[row] = 'L';
-                numberOfSteps.set(numberOfSteps.get() + 1);
-                break;
-            case '-':
-                this.gameBoard.get(col)[row] = '|';
-                numberOfSteps.set(numberOfSteps.get() + 1);
-                break;
-            case '|':
-                this.gameBoard.get(col)[row] = '-';
-                numberOfSteps.set(numberOfSteps.get() + 1);
-                break;
-            case 's':
-                this.gameBoard.get(col)[row] = 's';
-                break;
-            case 'g':
-                this.gameBoard.get(col)[row] = 'g';
-                break;
-            default:
-                this.gameBoard.get(col)[row] = ' ';
-                break;
+        char current = mazeData[row][col];
+        if (current != 's' && current != 'g' && current != ' ') {
+            stepsNum.set(stepsNum.get() + 1);
         }
-        //notify the bind
+        mazeData[row][col] = PipeSolver.getNextChar(mazeData[row][col]);
         this.gameBoard.set(col, this.gameBoard.get(col));
     }
 
-    public void saveGame(File file) throws IOException{
-            PrintWriter out = new PrintWriter(file);
-        for (char[] aGameBoard : this.gameBoard) {
-            out.println(new String(aGameBoard));
+    public void solve() throws IOException, InterruptedException {
+        if (this.serverSocket != null) {
+            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(this.serverSocket.getInputStream()));
+            PrintWriter outToServer = new PrintWriter(this.serverSocket.getOutputStream());
+
+            for (char[] line : this.gameBoard.get()) {
+                outToServer.println(line);
+                System.out.println(line);
+                outToServer.flush();
+            }
+
+            outToServer.println("done");
+            outToServer.flush();
+            System.out.println("flushed to server");
+            String line;
+            Boolean hasSteps = true;
+            while (!(line = inFromServer.readLine()).equals("done")) {
+                System.out.println("**"  + line);
+                String[] steps = line.split(",");
+                int row = Integer.parseInt(steps[0]);
+                int col = Integer.parseInt(steps[1]);
+                int step = Integer.parseInt(steps[2]);
+
+                for (int i = 1; i <= step; i++) {
+                    Platform.runLater(() -> movePipe(row, col));
+                    Thread.sleep(150);
+                }
+                hasSteps = false;
+            }
+            isGoal.setValue(hasSteps);
+            System.out.println("done");
         }
-            out.close();
     }
 
-    public void loadGame(String fileName) throws IOException {
+    public void saveCurrentGame(File file) {
+        try {
+            PrintWriter outFile = new PrintWriter(file);
+            for (char[] aGameBoard : this.gameBoard) {
+                outFile.println(new String(aGameBoard));
+            }
+
+            outFile.println(TIME_PREFIX + secondsPassed.get());
+            outFile.println(STEPS_PREFIX + stepsNum.get());
+
+            outFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void loadGame(File file) throws IOException {
         List<char[]> mazeBuilder = new ArrayList<>();
         BufferedReader reader;
-        reader = new BufferedReader(new FileReader(fileName));
+        reader = new BufferedReader(new FileReader(file));
         String line;
         while ((line = reader.readLine()) != null) {
-            mazeBuilder.add(line.toCharArray());
+            if (line.startsWith(TIME_PREFIX)) {
+                int seconds = Integer.parseInt(line.split(":")[1]);
+                secondsPassed.set(seconds);
+            } else if (line.startsWith(STEPS_PREFIX)) {
+                int steps = Integer.parseInt(line.split(":")[1]);
+                stepsNum.set(steps);
+            } else {
+                mazeBuilder.add(line.toCharArray());
+            }
         }
         this.gameBoard.setAll(mazeBuilder.toArray(new char[mazeBuilder.size()][]));
         reader.close();
     }
-    
-    
-	public boolean isSolution() throws IOException, InterruptedException {
-		if (serverSocket != null) {
-			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(this.serverSocket.getInputStream()));
-			PrintWriter outToServer = new PrintWriter(this.serverSocket.getOutputStream());
 
-			for (char[] line : this.gameBoard.get()) {
-				outToServer.println(line);
-				outToServer.flush();
-			}
-
-			outToServer.println("done");
-			outToServer.flush();
-
-			String line;
-			
-			if ((line = inFromServer.readLine()).equals("done")) 
-				return true;
-		}
-		return false;
-
-	}
 }

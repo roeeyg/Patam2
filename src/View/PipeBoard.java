@@ -1,7 +1,6 @@
 package View;
 
 
-import Searchers.PipeSolver;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.SnapshotParameters;
@@ -12,11 +11,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.function.Function;
 
-import Model.PGModel;
+import Images.RowCol;
 
 public class PipeBoard extends Canvas {
     private static final String ANGLE_PIPE_DEFAULT = "./resources/GrayCorner.png";
@@ -34,7 +34,7 @@ public class PipeBoard extends Canvas {
     private Image imagePipeVertical, imagePipeHorizontal, imagePipe0Rotation, imagePipe90Rotation,
             imagePipe180Rotation, imagePipe270Rotation, imageBackground, imageStart, imageGoal;
 
-    
+
     public PipeBoard() {
         regularPipeImage = new SimpleStringProperty();
         anglePipeImage = new SimpleStringProperty();
@@ -44,14 +44,19 @@ public class PipeBoard extends Canvas {
     }
 
 
-    public char[][] getMazeData()
-    {
-    	return this.mazeData;
-    }
-    
-    public void setMazeData(char[][] mazeData) {
+    void init(char[][] mazeData, Function<RowCol, Void> listener) {
         this.mazeData = mazeData;
         initImages();
+        redrawMaze();
+        addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            int col = (int) (event.getX() / colWidth);
+            int row = (int) (event.getY() / rowHeight);
+            listener.apply(new RowCol(row, col));
+        });
+    }
+
+    public void setMazeData(char[][] mazeData) {
+        this.mazeData = mazeData;
         redrawMaze();
     }
 
@@ -141,18 +146,11 @@ public class PipeBoard extends Canvas {
     public StringProperty goalImageProperty() {
         return goalImage;
     }
-    
-    public double getColdWidth()
-    {
-    	return this.colWidth;
-    }
-    
-    public double getRowHeight()
-    {
-    	return this.rowHeight;
-    }
 
-    public void redrawMaze() {
+    private void redrawMaze() {
+        if (mazeData == null) {
+            return;
+        }
         double width = getWidth();
         double height = getHeight();
         colWidth = width / mazeData[0].length;
@@ -160,7 +158,7 @@ public class PipeBoard extends Canvas {
         redraw();
     }
 
-     void initImages() {
+    void initImages() {
         Image regularPipe = null;
         Image anglePipe = null;
         try {
@@ -196,11 +194,11 @@ public class PipeBoard extends Canvas {
         rotateImage = 0;
         iv = new ImageView(regularPipe);
         iv.setRotate(rotateImage);
-        imagePipeVertical = iv.snapshot(params, null);
+        imagePipeHorizontal = iv.snapshot(params, null);
         //'-'
         rotateImage = 90;
         iv.setRotate(rotateImage);
-        imagePipeHorizontal = iv.snapshot(params, null);
+        imagePipeVertical = iv.snapshot(params, null);
     }
 
     void redraw() {
@@ -219,16 +217,16 @@ public class PipeBoard extends Canvas {
                             image = imagePipeHorizontal;
                             break;
                         case 'F':
-                            image = imagePipe0Rotation;
-                            break;
-                        case '7':
                             image = imagePipe90Rotation;
                             break;
-                        case 'J':
+                        case '7':
                             image = imagePipe180Rotation;
                             break;
-                        case 'L':
+                        case 'J':
                             image = imagePipe270Rotation;
+                            break;
+                        case 'L':
+                            image = imagePipe0Rotation;
                             break;
                         case ' ':
                             break;

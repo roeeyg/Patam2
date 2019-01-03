@@ -28,4 +28,12 @@ public class ServerConfig implements NakedObject {
     public String getFieldValue(String fieldName) {
         return fields.get(fieldName);
     }
+
+    public String getIP() {
+        return fields.get("Server");
+    }
+
+    public String getPort() {
+        return fields.get("Port");
+    }
 }

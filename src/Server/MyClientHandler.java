@@ -60,6 +60,22 @@ public class MyClientHandler implements ClientHandler {
         }
     }
 
+    public void handleClient(int numRows, int numCol, String level, OutputStream outToClient) {
+        startSolution(numRows, numCol, level, outToClient);
+    }
+    
+    private void startSolution(int numRows, int numCol, String level, OutputStream outToClient) {
+        //Getting solution from the cache manager
+        PrintWriter outTC = new PrintWriter(outToClient);
+
+        Solution solution = cacheManager.load(level);
+        if (solution == null) {
+            //solver
+            solution = solver.solve(convertStringToChar(level, numRows, numCol), numRows, numCol);
+            cacheManager.save(level, solution);
+        }
+    }
+        
     private char[][] convertStringToChar(String levelString, int rowNum, int colNum) {
         char[][] level = new char[rowNum][colNum];
         for (int i = 0; i < rowNum; i++) {

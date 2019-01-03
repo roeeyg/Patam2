@@ -12,5 +12,9 @@ public abstract class PriorityQRunnable implements Comparable<PriorityQRunnable>
 	public PriorityQRunnable(int priority){
 		this.priority = priority;
 	}
+	
+    public int getPriority() {
+        return priority;
+    }
 
 }

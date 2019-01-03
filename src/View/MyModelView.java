@@ -3,7 +3,7 @@ package View;
 import javafx.beans.property.*;
 
 import java.io.IOException;
-
+/*
 import Model.PGModel;
 import Searchers.PipeSolver;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -37,15 +37,15 @@ public class MyModelView {
 
     public void loadGame(String name) throws IOException
     {
-    	this.PGModel.loadGame(name);
-    	pipeBoard.setMazeData(this.PGModel.ToArray());
+    	//this.PGModel.loadGame(name);
+    	//pipeBoard.setMazeData(this.PGModel.ToArray());
     }
     
     
     
     public boolean isGoal() throws IOException, InterruptedException
     {
-    	return PGModel.isSolution();
+    	//return PGModel.isSolution();
     }
     
-}
+}*/
