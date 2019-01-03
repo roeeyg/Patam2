@@ -40,7 +40,7 @@
     <left>
         <VBox BorderPane.alignment="CENTER">
             <children>
-                <Button id="Gray-Blue" fx:id="startButton" focusTraversable="false" mnemonicParsing="false" onAction="#start" prefHeight="27.0" prefWidth="60.0" stylesheets="@./resources/styles/buttons.css" text="Start" >
+                <Button id="Gray-Blue" fx:id="startButton" focusTraversable="false" mnemonicParsing="false" onAction="#start" prefHeight="27.0" prefWidth="60.0" stylesheets="@../../resources/Buttons.css" text="Start" >
                     <VBox.margin>
                         <Insets bottom="10.0" top="30.0" />
                     </VBox.margin>
@@ -48,12 +48,12 @@
                   <Font name="System Bold Italic" size="13.0" />
                </font>
                 </Button>
-                <Button id="Gray-Blue" fx:id="stopButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#stop" prefHeight="27.0" prefWidth="60.0" stylesheets="@./styles/buttons.css" text="Stop" textFill="#241dad">
+                <Button id="Gray-Blue" fx:id="stopButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#stop" prefHeight="27.0" prefWidth="60.0" stylesheets="@../../resources/Buttons.css" text="Stop" textFill="#241dad">
                     <VBox.margin>
                         <Insets bottom="10.0" />
                     </VBox.margin>
                 </Button>
-                <Button id="Gray-Blue" fx:id="solveButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#solve" prefHeight="27.0" prefWidth="60.0" stylesheets="@./styles/buttons.css" text="Solve" textFill="#241dad" />
+                <Button id="Gray-Blue" fx:id="solveButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#solve" prefHeight="27.0" prefWidth="60.0" stylesheets="@../../resources/Buttons.css" text="Solve" textFill="#241dad" />
             </children>
             <opaqueInsets>
                 <Insets />

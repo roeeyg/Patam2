@@ -37,6 +37,8 @@ public class ClientDemo {
         outToServer.close();
         inFromUser.close();
         theServer.close();
+        
+        System.exit(0);
     }
-    
+
 }
