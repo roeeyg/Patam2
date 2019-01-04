@@ -56,6 +56,10 @@ public class PipeBoard extends Canvas {
         });
     }
 
+    public void setRegularPipeImage(String regularPipeImage) {
+        this.regularPipeImage.set(regularPipeImage);
+    }
+    
     public void setMazeData(char[][] mazeData) {
         this.mazeData = mazeData;
         redrawMaze();
@@ -65,14 +69,6 @@ public class PipeBoard extends Canvas {
         return regularPipeImage;
     }
 
-    public void setRegularPipeImage(String regularPipeImage) {
-        this.regularPipeImage.set(regularPipeImage);
-    }
-
-    /**
-     * Returns the straight pipe image the user of the view set.
-     * If no image was set - a default will be used.
-     */
     public String getRegularPipeImage() {
         if (regularPipeImage.get() == null || regularPipeImage.get().isEmpty()) {
             return REGULAR_PIPE_DEFAULT;
@@ -84,14 +80,6 @@ public class PipeBoard extends Canvas {
         return anglePipeImage;
     }
 
-    public void setAnglePipeImage(String anglePipeImage) {
-        this.anglePipeImage.set(anglePipeImage);
-    }
-
-    /**
-     * Returns the angled pipe image the user of the view set.
-     * If no image was set - a default will be used.
-     */
     public String getAnglePipeImage() {
         if (anglePipeImage.get() == null || anglePipeImage.get().isEmpty()) {
             return ANGLE_PIPE_DEFAULT;
@@ -99,23 +87,19 @@ public class PipeBoard extends Canvas {
         return anglePipeImage.get();
     }
 
-    /**
-     * Returns the background image the user of the view set.
-     * If no image was set - a default will be used.
-     */
     public String getBackgroundImage() {
         if (backgroundImage.get() == null || backgroundImage.get().isEmpty()) {
             return BACKGROUND_DEFAULT;
         }
         return backgroundImage.get();
     }
+    
+    public void setAnglePipeImage(String anglePipeImage) {
+        this.anglePipeImage.set(anglePipeImage);
+    }
 
     public StringProperty backgroundImagePropertyProperty() {
         return backgroundImage;
-    }
-
-    public void setBackgroundImageProperty(String backgroundImageProperty) {
-        this.backgroundImage.set(backgroundImageProperty);
     }
 
     public String getStartImage() {
@@ -125,6 +109,10 @@ public class PipeBoard extends Canvas {
         return startImage.get();
     }
 
+    public void setBackgroundImageProperty(String backgroundImageProperty) {
+        this.backgroundImage.set(backgroundImageProperty);
+    }
+    
     public StringProperty startImageProperty() {
         return startImage;
     }
@@ -135,13 +123,6 @@ public class PipeBoard extends Canvas {
 
     public void setGoalImage(String goalImage) {
         this.goalImage.set(goalImage);
-    }
-
-    public String getGoalImage() {
-        if (goalImage.get() == null || goalImage.get().isEmpty()) {
-            return GOAL_DEFAULT;
-        }
-        return goalImage.get();
     }
 
     public StringProperty goalImageProperty() {
@@ -159,6 +140,13 @@ public class PipeBoard extends Canvas {
         redraw();
     }
 
+    public String getGoalImage() {
+        if (goalImage.get() == null || goalImage.get().isEmpty()) {
+            return GOAL_DEFAULT;
+        }
+        return goalImage.get();
+    }
+    
     void initImages() {
         Image regularPipe = null;
         Image anglePipe = null;

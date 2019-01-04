@@ -36,9 +36,6 @@ public class MainWindowController implements Initializable {
     private Button stopButton;
     @FXML
     private Button solveButton;
-    @FXML
-    private Button checkIfDoneButton;
-
 
     private NakedObjectDisplayer nakedObjectDisplayer = new NakedObjectDisplayer();
     private ServerConfig serverConfigObject = new ServerConfig();
@@ -61,7 +58,7 @@ public class MainWindowController implements Initializable {
             return null;
         });
 
-        PGModel.gameBoard.addListener((observable, oldValue, newValue) -> PipeBoard.setMazeData(PGModel.gameBoard.toArray(new char[PGModel.gameBoard.size()][])));
+        PGModel.pipeMaze.addListener((observable, oldValue, newValue) -> PipeBoard.setMazeData(PGModel.pipeMaze.toArray(new char[PGModel.pipeMaze.size()][])));
         PGModel.stepsNum.addListener((observable, oldValue, newValue) -> this.stepsLabel.setText("Steps taken: " + Integer.toString(PGModel.stepsNum.get())));
         PGModel.secondsPassed.addListener((observable, oldValue, newValue) -> this.timeLabel.setText("Seconds passed: " + Integer.toString(PGModel.secondsPassed.get())));
         PGModel.isGoal.addListener((observable, oldValue, newValue) -> {
@@ -117,7 +114,6 @@ public class MainWindowController implements Initializable {
         startButton.setDisable(startDisabled);
         stopButton.setDisable(!startDisabled);
         solveButton.setDisable(!startDisabled);
-        checkIfDoneButton.setDisable(!startDisabled);
     }
 
 	public void openFile() throws IOException {
