@@ -36,6 +36,8 @@ public class MainWindowController implements Initializable {
     private Button stopButton;
     @FXML
     private Button solveButton;
+    @FXML
+    private Button checkIfDoneButton;
 
 
     private NakedObjectDisplayer nakedObjectDisplayer = new NakedObjectDisplayer();
@@ -66,6 +68,17 @@ public class MainWindowController implements Initializable {
             if (newValue)
                 Platform.runLater(() -> nakedObjectDisplayer.display(new Dialog("YAY!!!", "You solved the game!", "Woohoo!")));
         });
+    }
+   
+    public void isDone() throws IOException, InterruptedException
+    {
+    	PGModel.connect(serverConfigObject.getIP(), serverConfigObject.getPort());
+    	
+    	if(this.PGModel.isDone())
+    		nakedObjectDisplayer.display(new Dialog("Congratulation!!!", "You solved the game" , "Done"));
+    	else
+    		nakedObjectDisplayer.display(new Dialog("Sorry", "You did not solve the game" , "Try again"));
+    	PGModel.disconnect();
     }
 
     public void start() {

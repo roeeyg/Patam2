@@ -48,6 +48,14 @@
                   <Font name="System Bold Italic" size="13.0" />
                </font>
                 </Button>
+                                <Button id="Gray-Blue" fx:id="checkIfDoneButton" focusTraversable="false" mnemonicParsing="false" onAction="#isDone" prefHeight="27.0" prefWidth="60.0" stylesheets="@../../resources/Buttons.css" text="Check if done" >
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="30.0" />
+                    </VBox.margin>
+               <font>
+                  <Font name="System Bold Italic" size="13.0" />
+               </font>
+                </Button>
                 <Button id="Gray-Blue" fx:id="stopButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#stop" prefHeight="27.0" prefWidth="60.0" stylesheets="@../../resources/Buttons.css" text="Stop" textFill="#241dad">
                     <VBox.margin>
                         <Insets bottom="10.0" />

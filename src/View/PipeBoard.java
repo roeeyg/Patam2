@@ -52,6 +52,7 @@ public class PipeBoard extends Canvas {
             int col = (int) (event.getX() / colWidth);
             int row = (int) (event.getY() / rowHeight);
             listener.apply(new RowCol(row, col));
+            
         });
     }
 
