@@ -2,19 +2,18 @@ package Server;
 
 
 public abstract class PriorityQRunnable implements Comparable<PriorityQRunnable>, Runnable {
-	int priority;
-	
-	@Override
-	public int compareTo(PriorityQRunnable o) {
-		return this.priority - o.priority;
-	}
+    private int puzzlePriority;
 
-	public PriorityQRunnable(int priority){
-		this.priority = priority;
-	}
-	
-    public int getPriority() {
-        return priority;
+    @Override
+    public int compareTo(PriorityQRunnable priorityRunnable) {
+        return this.puzzlePriority - priorityRunnable.puzzlePriority;
     }
 
+    PriorityQRunnable(int puzzlePriority) {
+        this.puzzlePriority = puzzlePriority;
+    }
+
+    public int getPuzzlePriority() {
+        return puzzlePriority;
+    }
 }

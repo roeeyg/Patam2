@@ -1,6 +1,6 @@
 package Searchers;
 
-import Searchers.*;
+
 
 import Images.State;
 import Solver.Solution;
@@ -11,8 +11,8 @@ import java.util.List;
 public class BestFirstSearch extends GeneralSearcher {
 
     @Override
-    <T> Solution searchAlgorithm(Searchable<T>  s) {
-        addToOpenList(s.getInitialState());
+    public <T> Solution searchAlgorithm(Searchable<T>  s) {
+        addToOpenList(s.getInitState());
         HashSet<State> closedSet = new HashSet<>();
 
         while (!openList.isEmpty()) {
@@ -20,10 +20,10 @@ public class BestFirstSearch extends GeneralSearcher {
             closedSet.add(state);
 
             if (s.isGoal(state)) {
-                return backtraceSolution(state, s.getInitialState());
+                return backtraceSolution(state, s.getInitState());
             }
 
-            List<State<T>> PotentialStates = s.getPotentialStates(state);
+            List<State<T>> PotentialStates = s.getAllStates(state);
 
             for (State<T> possibleState : PotentialStates) {
                 if (!closedSet.contains(possibleState)) {

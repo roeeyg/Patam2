@@ -1,77 +1,67 @@
 package Server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.net.*;
+import java.io.*;
 
-public class MyMultiServer implements Server {
+public class MyMultiServer
+{
     private int port;
-    private boolean stop = false;
-    private ThreadPoolExecutor threadPoolExecutor;
-    private int clientsCount = 0;
-
-    MyMultiServer(int port, int threadsNumber) {
+    private ServerSocket serverSocket;
+    private volatile boolean stop;
+    ThreadPoolExecutor threadPool;
+    
+    public MyMultiServer(int port, int threadsNum) {
         this.port = port;
-        this.threadPoolExecutor = new ThreadPoolExecutor(threadsNumber, threadsNumber, 10, TimeUnit.SECONDS,
-                new PriorityBlockingQueue<>());
+        this.threadPool = new ThreadPoolExecutor(threadsNum, threadsNum, 10, TimeUnit.SECONDS, new PriorityBlockingQueue<>());
     }
+    
+    private void startServer(final ClientHandler ch) throws IOException {
+        (this.serverSocket = new ServerSocket(this.port)).setSoTimeout(5000);
+        System.out.println("Server connected - waiting for client");
+        while (!this.stop) {
+            try {
+                Socket aClient = this.serverSocket.accept();
+                int matrixSize=aClient.getInputStream().available();
+                
+                PriorityQRunnable priorityQueue = new PriorityQRunnable(matrixSize) {
+                	@Override
+					public void run() {
+						try {
+			                System.out.println("handle client");
+			                ch.handleClient(aClient.getInputStream(),aClient.getOutputStream());
+			                aClient.close();
+			            } catch (IOException e) {
+							e.printStackTrace();
+						}
+                	}
+                };
+                
+                threadPool.execute(priorityQueue); 
+            }
 
-    @Override
-    public void start(ClientHandler clientHandler) {
+          
+        
+                
+            catch (SocketTimeoutException ex) {}
+        }
+        System.out.println("Finish handling last clients");
+        this.threadPool.shutdown();
+        this.serverSocket.close();
+    }
+    
+    public void stop() {
+        this.stop = true;
+    }
+    
+    public void start(final ClientHandler ch) {
         new Thread(() -> {
             try {
-                startServer(clientHandler);
-            } catch (IOException e) {
+                this.startServer(ch);
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    private void startServer(ClientHandler clientHandler) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(port);
-        serverSocket.setSoTimeout(5000);
-        System.out.println("Server connected - waiting for client");
-
-        while (!stop) {
-            try {
-                Socket aClient = serverSocket.accept();
-                clientsCount++;
-                System.out.println("*** client number " + clientsCount + " is connected ***");
-                InputFromUserReader inputFromUserReader = new InputFromUserReader();
-                inputFromUserReader.readFromUser(aClient.getInputStream());
-
-                PriorityQRunnable priorityRunnable = new PriorityQRunnable(inputFromUserReader.numRows * inputFromUserReader.numCol) {
-                    @Override
-                    public void run() {
-                        try {
-                            clientHandler.handleClient(inputFromUserReader.numRows, inputFromUserReader.numCol, inputFromUserReader.output, aClient.getOutputStream());
-                            aClient.close();
-                          //  System.out.println("*** Finished with a client with priority " + this.getPuzzlePriority());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-
-                threadPoolExecutor.execute(priorityRunnable);
-
-            } catch (SocketTimeoutException e) {
-                if(threadPoolExecutor.getActiveCount() == 0){
-                    System.out.println("No  more tasks");
-                    this.stop();
-                }
-            }
-        }
-        threadPoolExecutor.shutdown();
-        serverSocket.close();
-    }
-
-    @Override
-    public void stop() {
-        stop = true;
     }
 }

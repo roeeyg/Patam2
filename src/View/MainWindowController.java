@@ -51,6 +51,7 @@ public class MainWindowController implements Initializable {
         PipeBoard.init(PGModel.getMazeData(), rowCol -> {
             if (PGModel.isGameStarted()) {
                 PGModel.movePipe(rowCol.getRow(), rowCol.getCol());
+                PipeBoard.setMazeData(PGModel.getMazeData());
                 PipeBoard.redraw();
             } else {
                 nakedObjectDisplayer.display(new Dialog("Error!", "Please click on Start to begin playing", "Ok"));
@@ -118,6 +119,7 @@ public class MainWindowController implements Initializable {
             System.out.println("Chose: " + chosen.getName());
             try {
                 PGModel.loadGame(chosen);
+                PipeBoard.setMazeData(PGModel.ToArray());
             } catch (IOException e) {
                 e.printStackTrace();
             }
