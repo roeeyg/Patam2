@@ -56,7 +56,7 @@ public class MainWindowController implements Initializable {
                 PipeBoard.setMazeData(PGModel.getMazeData());
                 PipeBoard.redraw();
             } else {
-                nakedObjectDisplayer.display(new Dialog("Error!", "Please click on Start to begin playing", "Ok"));
+                nakedObjectDisplayer.display(new Dialog("Did you forget somthing?", "You need to click on Start", "Got it"));
             }
             return null;
         });
@@ -65,8 +65,6 @@ public class MainWindowController implements Initializable {
         PGModel.stepsNum.addListener((observable, oldValue, newValue) -> this.stepsLabel.setText("Steps taken: " + Integer.toString(PGModel.stepsNum.get())));
         PGModel.secondsPassed.addListener((observable, oldValue, newValue) -> this.timeLabel.setText("Seconds passed: " + Integer.toString(PGModel.secondsPassed.get())));
         PGModel.isGoal.addListener((observable, oldValue, newValue) -> {
-            if (newValue)
-                Platform.runLater(() -> nakedObjectDisplayer.display(new Dialog("YAY!!!", "You solved the game!", "Woohoo!")));
         });
     }
    
@@ -119,6 +117,7 @@ public class MainWindowController implements Initializable {
         startButton.setDisable(startDisabled);
         stopButton.setDisable(!startDisabled);
         solveButton.setDisable(!startDisabled);
+        checkIfDoneButton.setDisable(!startDisabled);
     }
 
 	public void openFile() throws IOException {
