@@ -121,23 +121,23 @@ public class MainWindowController implements Initializable {
         solveButton.setDisable(!startDisabled);
     }
 
-    public void openFile() {
-        System.out.println("openFile");
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Load maze file");
-        fc.setInitialDirectory(new File("./resources"));
-        fc.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        File chosen = fc.showOpenDialog(null);
-        if (chosen != null) {
-            System.out.println("Chose: " + chosen.getName());
-            try {
-                PGModel.loadGame(chosen);
-                PipeBoard.setMazeData(PGModel.ToArray());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	public void openFile() throws IOException {
+		FileChooser fc= new FileChooser();
+		fc.setTitle("Open pipe game file");
+		fc.setInitialDirectory(new File("./resources"));
+		
+		FileChooser.ExtensionFilter txtExtensionFilter = new FileChooser.ExtensionFilter("Text Files", "*.txt");
+		fc.getExtensionFilters().add(txtExtensionFilter);
+		fc.setSelectedExtensionFilter(txtExtensionFilter);
+		File chosen = fc.showOpenDialog(null);
+		if (chosen != null) {
+			System.out.println(chosen.getName());
+			this.PGModel.loadGame(chosen.getAbsolutePath());
+		}
+		else
+			System.out.println("not found");
+		
+	}
 
     public void saveFile() {
         stop();
