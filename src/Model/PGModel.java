@@ -27,6 +27,7 @@ public class PGModel {
     public ListProperty<char[]> gameBoard = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
     public BooleanProperty isGoal = new SimpleBooleanProperty();
 
+    //Start maze
     private char[][] mazeData = {
             {'s', 'L', 'F'},
             {'F', '-', 'F'},
@@ -35,6 +36,22 @@ public class PGModel {
 
     public char[][] getMazeData() {
         return gameBoard.toArray(new char[gameBoard.size()][]);
+    }
+    
+    public char[][] ToArray()
+    {    	
+    	int col = this.gameBoard.getSize();
+    	int row = this.gameBoard.getValue().get(0).length;
+
+    	char[][] array = new char[col][row];
+
+    	for(int i = 0; i < col; i++)
+    		for(int j =0; j < row; j++)
+    		{
+    			array[i][j] = this.gameBoard.get(i)[j];
+    		}
+
+    	return array;
     }
 
     public PGModel() {
@@ -52,9 +69,33 @@ public class PGModel {
     public void stop() {
         if (executor != null) {
             executor.shutdown();
+            
         }
         executor = null;
     }
+    
+    public boolean isDone() throws IOException, InterruptedException {
+		if (serverSocket != null) {
+			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(this.serverSocket.getInputStream()));
+			PrintWriter outToServer = new PrintWriter(this.serverSocket.getOutputStream());
+
+			for (char[] line : this.gameBoard.get()) {
+				outToServer.println(line);
+				outToServer.flush();
+			}
+
+			outToServer.println("done");
+			outToServer.flush();
+
+			String line;
+			
+			if ((line = inFromServer.readLine()).equals("done")) 
+				return true;
+		}
+		return false;
+
+	}
+
 
     private void setTimer() {
         Runnable helloRunnable = () -> Platform.runLater(() -> secondsPassed.setValue(secondsPassed.get() + 1));
@@ -80,7 +121,7 @@ public class PGModel {
         if (current != 's' && current != 'g' && current != ' ') {
             stepsNum.set(stepsNum.get() + 1);
         }
-        mazeData[row][col] = PipeSolver.getNextChar(mazeData[row][col]);
+        mazeData[row][col] = PipeSolver.getNextClick(mazeData[row][col]);
         this.gameBoard.set(col, this.gameBoard.get(col));
     }
 
@@ -135,24 +176,23 @@ public class PGModel {
     }
 
 
-    public void loadGame(File file) throws IOException {
-        List<char[]> mazeBuilder = new ArrayList<>();
-        BufferedReader reader;
-        reader = new BufferedReader(new FileReader(file));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith(TIME_PREFIX)) {
-                int seconds = Integer.parseInt(line.split(":")[1]);
-                secondsPassed.set(seconds);
-            } else if (line.startsWith(STEPS_PREFIX)) {
-                int steps = Integer.parseInt(line.split(":")[1]);
-                stepsNum.set(steps);
-            } else {
-                mazeBuilder.add(line.toCharArray());
-            }
-        }
-        this.gameBoard.setAll(mazeBuilder.toArray(new char[mazeBuilder.size()][]));
-        reader.close();
-    }
+	public void loadGame(String fileName) {
+		List<char[]> PGBoardBuilder = new ArrayList<char[]>();
+		BufferedReader reader;
+		try {
+
+			reader = new BufferedReader(new FileReader(fileName));
+			String line;
+			while ((line = reader.readLine()) != null)
+				PGBoardBuilder.add(line.toCharArray());
+			this.gameBoard.setAll(PGBoardBuilder.toArray(new char[PGBoardBuilder.size()][]));
+			this.mazeData=this.gameBoard.toArray(new char [this.gameBoard.size()][]);
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 }
