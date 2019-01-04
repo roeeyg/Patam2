@@ -179,7 +179,7 @@ public class MainWindowController implements Initializable {
         PipeBoard.setGoalImage(Themes.getEndImage());
         PipeBoard.initImages();
         PipeBoard.redraw();
-        //playMusic(Themes.getMusic());
+        playMusic(Themes.getMusic());
     }
 
     private void playMusic(String musicFile) {

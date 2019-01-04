@@ -63,4 +63,13 @@ public enum Themes {
                 return "./resources/GraySE.png";
         }
     }
+    
+    public String getMusic() {
+        switch (this) {
+            case Blue:
+                return "resources/Blue.mp3";
+            default:
+                return "resources/Gray.mp3";
+        }
+    }
 }
